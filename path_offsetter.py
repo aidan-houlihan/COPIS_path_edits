@@ -5,9 +5,8 @@ from re import T
 import numpy as np
 import json
 import tkinter
-from tkinter import * #Entry, BOTTOM, LEFT, RIGHT, TOP, Label, StringVar, Tk, Button, mainloop, ttk, Frame
+from tkinter import * 
 from tkinter.filedialog import askopenfilename
-
 
 edit_or_combine_test = 1
 cam_to_edit = "" 
@@ -23,6 +22,7 @@ series_num =""
 start = ""
 end = ""
 number_of_paths = ""
+filename = ""
 
 
 def set_value(value):
@@ -79,6 +79,9 @@ def getPaths():
   number_of_paths = int(path_num.get())
   root.destroy()
 
+def Close():
+  root.destroy()
+
 
 root = Tk()
 root.eval('tk::PlaceWindow . center')
@@ -125,13 +128,14 @@ if edit_or_combine_test == "a":
 
 
   root = Tk()
-  root.eval('tk::PlaceWindow . center')
+  
   root.attributes('-topmost',True)
   f=Frame(root)
-  label = Label(root, text = "If you would like to edit only a single camera enter its index, if not enter 'n'.").pack(side = TOP, pady = 5)
+  label = Label(root, text = "If you would like to edit only a single camera \n enter its index, if not enter 'n'.").pack(side = TOP, pady = 5)
   cam = Entry(root)
   cam.pack(pady = 5)
   Button(root, text = "Continue", command=lambda *args: set_value_cams()).pack(side = BOTTOM, pady = 5)
+  root.eval('tk::PlaceWindow . center')
   root.mainloop()
 
   #cam_to_edit = input("If you would like to edit only a single camera enter its index, if not enter 'n'.\n")
@@ -142,24 +146,24 @@ if edit_or_combine_test == "a":
       break
     else:
       root = Tk()
-      root.eval('tk::PlaceWindow . center')
       f=Frame(root)
       label = Label(root, text = "Sorry, your input was not valid, enter a camera index (0-5) or n").pack(side = TOP, pady = 20)
       cam = Entry(root)
       cam.pack(pady = 20)
       Button(root, text = "Continue", command=lambda *args: set_value_cams()).pack(side = BOTTOM, pady = 20)
+      root.eval('tk::PlaceWindow . center')
       root.mainloop()
 
   if cam_to_edit != "n":
 
     root = Tk()
-    root.eval('tk::PlaceWindow . center')
     f= Frame(root)
     label = Label(root, text = "Do you wish to edit...")
     Button(f, text = "All poses for this camera?", command=lambda *args: set_consecutive("a")).pack(side = LEFT, padx = 10, pady =10)
     Button(f, text = "Certain sections of poses?", command=lambda *args: set_consecutive("b")).pack(side = RIGHT, padx = 10, pady = 10)
     label.pack(pady = 10)
     f.pack()
+    root.eval('tk::PlaceWindow . center')
     root.mainloop()
 
     #editing all for this cam
@@ -167,7 +171,6 @@ if edit_or_combine_test == "a":
       cam_to_edit = int(cam_to_edit)
 
       root = Tk()
-      root.eval('tk::PlaceWindow . center')
       Label(root, text = "Enter your X, Y, and Z Offsets and press Submit").grid(row = 0, sticky= N)
       Label(root, text = "X Offset").grid(row = 1, sticky = W)
       Label(root, text = "Y Offset").grid(row = 2, sticky = W)
@@ -179,23 +182,23 @@ if edit_or_combine_test == "a":
       y.grid(row = 2, column = 0)
       z.grid(row = 3, column = 0)
       Button(root, text = "Submit", command=lambda *args: getXYZ()).grid(row = 5, column = 0)
+      root.eval('tk::PlaceWindow . center')
       root.mainloop()
 
       root = Tk()
-      root.eval('tk::PlaceWindow . center')
       f= Frame(root)
       label = Label(root, text = "Do you wish to fix pan and tilt?")
       Button(f, text = "Yes", command=lambda *args: pan_tilt_ask("y")).pack(side = LEFT, padx = 10, pady =10)
       Button(f, text = "No", command=lambda *args: pan_tilt_ask("n")).pack(side = RIGHT, padx = 10, pady = 10)
       label.pack(pady = 10)
       f.pack()
+      root.eval('tk::PlaceWindow . center')
       root.mainloop()
 
       #edit_pan_tilt = input("Would you like to fix pan and tilt? y/n\n")
 
       if edit_pan_tilt == "y":
         root = Tk()
-        root.eval('tk::PlaceWindow . center')
         Label(root, text = "Enter your pan and tilt values and press Submit").grid(row = 0, sticky= N)
         Label(root, text = "Pan").grid(row = 1, sticky = W)
         Label(root, text = "Tilt").grid(row = 2, sticky = W)
@@ -204,6 +207,7 @@ if edit_or_combine_test == "a":
         p.grid(row = 1, column = 0)
         t.grid(row = 2, column = 0)
         Button(root, text = "Submit", command=lambda *args: getPT()).grid(row = 5, column = 0)
+        root.eval('tk::PlaceWindow . center')
         root.mainloop()
 
       for i in range(0,poses):
@@ -230,12 +234,12 @@ if edit_or_combine_test == "a":
     else: 
 
       root = Tk()
-      root.eval('tk::PlaceWindow . center')
       Label(root, text = "How many sections would you like to adjust?").grid(row = 0, sticky= N)
       Label(root, text = "Number of Sections").grid(row = 1, sticky = W)
       sections=Entry(root)
       sections.grid(row = 1, column = 0)
       Button(root, text = "Submit", command=lambda *args: getSections()).grid(row = 2, column = 0)
+      root.eval('tk::PlaceWindow . center')
       root.mainloop()
 
       series_dct = {}
@@ -245,7 +249,6 @@ if edit_or_combine_test == "a":
             series_dct[i] = []
 
             root = Tk()
-            root.eval('tk::PlaceWindow . center')
             Label(root, text = ("Enter the starting and ending poses for Section %s" % str(i+1))).grid(row = 0, sticky= N)
             Label(root, text = "Start").grid(row = 1, sticky = W)
             Label(root, text = "End").grid(row = 2, sticky = W)
@@ -254,13 +257,13 @@ if edit_or_combine_test == "a":
             st.grid(row = 1, column = 0)
             en.grid(row = 2, column = 0)
             Button(root, text = "Submit", command=lambda *args: getStartEnd()).grid(row = 5, column = 0)
+            root.eval('tk::PlaceWindow . center')
             root.mainloop()
 
             for p in range(start, end+1):
                 series_dct[i].append(p)
 
       root = Tk()
-      root.eval('tk::PlaceWindow . center')
       Label(root, text = "Enter your X, Y, and Z Offsets and press Submit").grid(row = 0, sticky= N)
       Label(root, text = "X Offset").grid(row = 1, sticky = W)
       Label(root, text = "Y Offset").grid(row = 2, sticky = W)
@@ -272,21 +275,21 @@ if edit_or_combine_test == "a":
       y.grid(row = 2, column = 0)
       z.grid(row = 3, column = 0)
       Button(root, text = "Submit", command=lambda *args: getXYZ()).grid(row = 5, column = 0)
+      root.eval('tk::PlaceWindow . center')
       root.mainloop()
 
       root = Tk()
-      root.eval('tk::PlaceWindow . center')
       f= Frame(root)
       label = Label(root, text = "Do you wish to fix pan and tilt?")
       Button(f, text = "Yes", command=lambda *args: pan_tilt_ask("y")).pack(side = LEFT, padx = 10, pady =10)
       Button(f, text = "No", command=lambda *args: pan_tilt_ask("n")).pack(side = RIGHT, padx = 10, pady = 10)
       label.pack(pady = 10)
       f.pack()
+      root.eval('tk::PlaceWindow . center')
       root.mainloop()
 
       if edit_pan_tilt == "y":
         root = Tk()
-        root.eval('tk::PlaceWindow . center')
         Label(root, text = "Enter your pan and tilt values and press Submit").grid(row = 0, sticky= N)
         Label(root, text = "Pan").grid(row = 1, sticky = W)
         Label(root, text = "Tilt").grid(row = 2, sticky = W)
@@ -295,6 +298,7 @@ if edit_or_combine_test == "a":
         p.grid(row = 1, column = 0)
         t.grid(row = 2, column = 0)
         Button(root, text = "Submit", command=lambda *args: getPT()).grid(row = 5, column = 0)
+        root.eval('tk::PlaceWindow . center')
         root.mainloop()
 
       for i in range((len(series_dct))):
@@ -318,7 +322,6 @@ if edit_or_combine_test == "a":
   #editing all cameras          
   else:
     root = Tk()
-    root.eval('tk::PlaceWindow . center')
     Label(root, text = "Enter your X, Y, and Z Offsets and press Submit").grid(row = 0, sticky= N)
     Label(root, text = "X Offset").grid(row = 1, sticky = W)
     Label(root, text = "Y Offset").grid(row = 2, sticky = W)
@@ -330,21 +333,20 @@ if edit_or_combine_test == "a":
     y.grid(row = 2, column = 0)
     z.grid(row = 3, column = 0)
     Button(root, text = "Submit", command=lambda *args: getXYZ()).grid(row = 5, column = 0)
+    root.eval('tk::PlaceWindow . center')
     root.mainloop()
 
     root = Tk()
-    root.eval('tk::PlaceWindow . center')
     f= Frame(root)
-    label = Label(root, text = "Do you wish to fix pan and tilt?")
     Button(f, text = "Yes", command=lambda *args: pan_tilt_ask("y")).pack(side = LEFT, padx = 10, pady =10)
     Button(f, text = "No", command=lambda *args: pan_tilt_ask("n")).pack(side = RIGHT, padx = 10, pady = 10)
     label.pack(pady = 10)
     f.pack()
+    root.eval('tk::PlaceWindow . center')
     root.mainloop()
 
     if edit_pan_tilt == "y":
       root = Tk()
-      root.eval('tk::PlaceWindow . center')
       Label(root, text = "Enter your pan and tilt values and press Submit").grid(row = 0, sticky= N)
       Label(root, text = "Pan").grid(row = 1, sticky = W)
       Label(root, text = "Tilt").grid(row = 2, sticky = W)
@@ -353,6 +355,7 @@ if edit_or_combine_test == "a":
       p.grid(row = 1, column = 0)
       t.grid(row = 2, column = 0)
       Button(root, text = "Submit", command=lambda *args: getPT()).grid(row = 5, column = 0)
+      root.eval('tk::PlaceWindow . center')
       root.mainloop()
     
     for i in range(0,poses):
@@ -374,12 +377,12 @@ if edit_or_combine_test == "a":
 
   #getting filename settings
   root = Tk()
-  root.eval('tk::PlaceWindow . center')
-  Label(root, text = "Enter 'NewFilename.cproj' or type n to generate automatically").grid(row = 0, sticky= N)
+  Label(root, text = "Enter 'NewFilename' or type n to generate automatically").grid(row = 0, sticky= N)
   Label(root, text = "Filename").grid(row = 1, sticky = W)
   file=Entry(root)
   file.grid(row = 1, column = 0)
   Button(root, text = "Submit and Save", command=lambda *args: getFilename()).grid(row = 2, column = 0)
+  root.eval('tk::PlaceWindow . center')
   root.mainloop()
 
   #automatic file naming  
@@ -392,21 +395,23 @@ if edit_or_combine_test == "a":
 
   #setting user inputed filename
   else:
-      with open(name, 'w') as convert_file:
-        convert_file.write(json.dumps(path))
+    
+    new_filename = filename.rsplit("/", 1)[0] + "/" + name + ".cproj"
+    with open(new_filename, 'w') as convert_file:
+      convert_file.write(json.dumps(path))
 
 
 #COMBINING PATHS
 elif edit_or_combine_test == "b":
 
   root = Tk()
-  root.eval('tk::PlaceWindow . center')
   root.attributes('-topmost',True)
   f=Frame(root)
   label = Label(root, text = "How many paths would you like to combine? All settings besides \n poses (proxies, profiles  etc.) will be taken from the first path chosen").pack(side = TOP, pady = 5)
   path_num = Entry(root)
   path_num.pack(pady = 5)
   Button(root, text = "Submit", command=lambda *args: getPaths()).pack(side = BOTTOM, pady = 5)
+  root.eval('tk::PlaceWindow . center')
   root.mainloop()
 
   # number_of_paths = int(input("How many paths would you like to combine? All settings besides camera poses (proxies, device profiles, etc.) will be taken from the first path chosen\n"))
@@ -425,8 +430,20 @@ elif edit_or_combine_test == "b":
       if filename.endswith('.cproj'):
         break
       else:
-        print("Sorry, that file is not a COPIS path, please choose another file\n")
+        root = Tk()
+        root.attributes('-topmost',True)
+        label = Label(text = "Sorry, that file is not a COPIS path, please choose another file").pack(side = TOP, pady = 10)
+        Button(root, text = "Try again", command=Close).pack(side = BOTTOM, pady = 10)
+        root.eval('tk::PlaceWindow . center')
+        root.mainloop()
+
+        root = Tk()
+        root.withdraw()
         filename = askopenfilename()
+        root.destroy()
+        
+
+        
 
     if i == 0:
       path1name = filename
@@ -448,7 +465,7 @@ elif edit_or_combine_test == "b":
   root = Tk()
   root.eval('tk::PlaceWindow . center')
   root.attributes('-topmost',True)
-  Label(root, text = "Enter 'NewFilename.cproj' or type n to generate automatically").grid(row = 0, sticky= N)
+  Label(root, text = "Enter 'NewFilename' or type n to generate automatically").grid(row = 0, sticky= N)
   Label(root, text = "Filename").grid(row = 1, sticky = W)
   file=Entry(root)
   file.grid(row = 1, column = 0)
@@ -468,10 +485,15 @@ elif edit_or_combine_test == "b":
       convert_file.write(json.dumps(combined_path))
 
   else:
-    with open(name, 'w') as convert_file:
+    new_filename = path1name.rsplit("/", 1)[0] + "/" + name + ".cproj"
+    print(new_filename)
+    with open(new_filename, 'w') as convert_file:
       convert_file.write(json.dumps(combined_path))
-      print(name)
+      print(new_filename)
 
 
 else:
   print("hit a button you idiot")
+
+
+  
