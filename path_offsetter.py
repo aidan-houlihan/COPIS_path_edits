@@ -9,20 +9,20 @@ from tkinter import *
 from tkinter.filedialog import askopenfilename
 
 edit_or_combine_test = 1
-cam_to_edit = "" 
-consecutive = ""
-x_offset = ""
-y_offset = ""
-z_offset = ""
-edit_pan_tilt = ""
-pan = ""
-tilt = ""
-name = ""
-series_num =""
-start = ""
-end = ""
-number_of_paths = ""
-filename = ""
+cam_to_edit = None 
+consecutive = None
+x_offset = None
+y_offset = None
+z_offset = None
+edit_pan_tilt = None
+pan = None
+tilt = None
+name = None
+series_num =None
+start = None
+end = None
+number_of_paths = None
+filename = None
 
 
 def set_value(value):
@@ -86,8 +86,9 @@ def Close():
 root = Tk()
 root.eval('tk::PlaceWindow . center')
 f = Frame(root)
-Button(f, text='Edit a path',command=lambda *args: set_value("a")).pack(side = LEFT, padx = 20, pady = 5)
-Button(f, text='Add paths',command=lambda *args: set_value("b")).pack(side = RIGHT, padx= 10, pady = 5)
+Button(f, text='Edit a path',command=lambda *args: set_value("a")).pack(side = LEFT, padx = 10, pady = 5)
+Button(f, text='Combine paths',command=lambda *args: set_value("b")).pack(side = LEFT, padx= 10, pady = 5)
+Button(f, text='Invert a path',command=lambda *args: set_value("c")).pack(side = LEFT, padx= 10, pady = 5)
 label = Label(root, text = "Choose what you would like to do!")
 label.pack()
 f.pack()
@@ -131,7 +132,7 @@ if edit_or_combine_test == "a":
   
   root.attributes('-topmost',True)
   f=Frame(root)
-  label = Label(root, text = "If you would like to edit only a single camera \n enter its index, if not enter 'n'.").pack(side = TOP, pady = 5)
+  label = Label(root, text = "If you would like to edit only a single camera \n enter its index, if not leave blank.").pack(side = TOP, pady = 5)
   cam = Entry(root)
   cam.pack(pady = 5)
   Button(root, text = "Continue", command=lambda *args: set_value_cams()).pack(side = BOTTOM, pady = 5)
@@ -142,7 +143,7 @@ if edit_or_combine_test == "a":
   
   #check the camera index or n value from input
   while True:
-    if cam_to_edit == "0" or cam_to_edit == "1" or cam_to_edit == "2" or cam_to_edit == "3" or cam_to_edit == "4" or cam_to_edit == "5" or cam_to_edit == "n":
+    if cam_to_edit == "0" or cam_to_edit == "1" or cam_to_edit == "2" or cam_to_edit == "3" or cam_to_edit == "4" or cam_to_edit == "5" or cam_to_edit == "":
       break
     else:
       root = Tk()
@@ -154,7 +155,7 @@ if edit_or_combine_test == "a":
       root.eval('tk::PlaceWindow . center')
       root.mainloop()
 
-  if cam_to_edit != "n":
+  if cam_to_edit != "":
 
     root = Tk()
     f= Frame(root)
@@ -338,6 +339,7 @@ if edit_or_combine_test == "a":
 
     root = Tk()
     f= Frame(root)
+    label = Label(root, text = "Would you like to fix pan and tilt?")
     Button(f, text = "Yes", command=lambda *args: pan_tilt_ask("y")).pack(side = LEFT, padx = 10, pady =10)
     Button(f, text = "No", command=lambda *args: pan_tilt_ask("n")).pack(side = RIGHT, padx = 10, pady = 10)
     label.pack(pady = 10)
@@ -377,7 +379,7 @@ if edit_or_combine_test == "a":
 
   #getting filename settings
   root = Tk()
-  Label(root, text = "Enter 'NewFilename' or type n to generate automatically").grid(row = 0, sticky= N)
+  Label(root, text = "Enter 'NewFilename' or leave blank to generate automatically").grid(row = 0, sticky= N)
   Label(root, text = "Filename").grid(row = 1, sticky = W)
   file=Entry(root)
   file.grid(row = 1, column = 0)
@@ -386,7 +388,7 @@ if edit_or_combine_test == "a":
   root.mainloop()
 
   #automatic file naming  
-  if name == "n":
+  if name == "":
       new_filename = filename[:len(filename)-6] + "_edited" + ".cproj"
       print(new_filename)
 
@@ -442,9 +444,6 @@ elif edit_or_combine_test == "b":
         filename = askopenfilename()
         root.destroy()
         
-
-        
-
     if i == 0:
       path1name = filename
 
@@ -457,7 +456,6 @@ elif edit_or_combine_test == "b":
 
     paths[i] = path_i
 
-   
   combined_path['profile'] = paths[0]['profile']
   combined_path['proxies'] = paths[0]['proxies']
 
@@ -465,7 +463,7 @@ elif edit_or_combine_test == "b":
   root = Tk()
   root.eval('tk::PlaceWindow . center')
   root.attributes('-topmost',True)
-  Label(root, text = "Enter 'NewFilename' or type n to generate automatically").grid(row = 0, sticky= N)
+  Label(root, text = "Enter 'NewFilename' or leave blank to generate automatically").grid(row = 0, sticky= N)
   Label(root, text = "Filename").grid(row = 1, sticky = W)
   file=Entry(root)
   file.grid(row = 1, column = 0)
@@ -477,7 +475,7 @@ elif edit_or_combine_test == "b":
 
       combined_path['imaging_path'].append(paths[i]['imaging_path'][j])
 
-  if name == "n":
+  if name == "":
     new_filename = path1name[:len(path1name)-6] + "_combined" + ".cproj"
     print(new_filename)
 
@@ -493,7 +491,94 @@ elif edit_or_combine_test == "b":
 
 
 else:
-  print("hit a button you idiot")
-
-
   
+  root = Tk()
+  root.withdraw()
+  filename = askopenfilename()
+  root.destroy()
+
+  #Check valid .cproj file
+  while True:
+    if filename.endswith('.cproj'):
+      break
+    else:
+      print("Sorry, that file is not a COPIS path, please choose another file\n")
+      root = Tk()
+      root.withdraw()
+      filename = askopenfilename()
+      root.destroy()
+
+  # reading the data from the file
+  with open(filename) as f:
+    path_file = f.read()
+
+  # reconstructing the data as a dictionary
+  path = json.loads(path_file)
+
+  #get the length of the imaging path (in pose sets)
+  poses = (len(path['imaging_path']))
+
+  inverted_path = {"imaging_path" : [] , "profile": {}, "proxies":{}}
+
+  inverted_path['profile'] = path['profile']
+  inverted_path['proxies'] = path['proxies']
+
+  #getting filename settings
+  root = Tk()
+  Label(root, text = "Enter 'NewFilename' or leave blank to generate automatically").grid(row = 0, sticky= N)
+  Label(root, text = "Filename").grid(row = 1, sticky = W)
+  file=Entry(root)
+  file.grid(row = 1, column = 0)
+  Button(root, text = "Submit and Save", command=lambda *args: getFilename()).grid(row = 2, column = 0)
+  root.eval('tk::PlaceWindow . center')
+  root.mainloop()
+
+  #inverting the path
+  for i in range(0,poses): 
+    cams = len(path['imaging_path'][i])
+    for j in range(0,cams):
+
+      inverted_path['imaging_path'].append(path['imaging_path'][i][j])
+
+      if path['imaging_path'][i][j][0]['device'] == 0:
+        path['imaging_path'][i][j][0]['device'] = 3
+        path['imaging_path'][i][j][1][0]['device'] = 3
+
+      elif path['imaging_path'][i][j][0]['device'] == 1:
+        path['imaging_path'][i][j][0]['device'] = 4
+        path['imaging_path'][i][j][1][0]['device'] = 4
+      
+      elif path['imaging_path'][i][j][0]['device'] == 2:
+        path['imaging_path'][i][j][0]['device'] = 5
+        path['imaging_path'][i][j][1][0]['device'] = 5
+      
+      elif path['imaging_path'][i][j][0]['device'] == 3:
+        path['imaging_path'][i][j][0]['device'] = 0
+        path['imaging_path'][i][j][1][0]['device'] = 0
+      
+      elif path['imaging_path'][i][j][0]['device'] == 4:
+        path['imaging_path'][i][j][0]['device'] = 1 
+        path['imaging_path'][i][j][1][0]['device'] = 1 
+      
+      else:
+        path['imaging_path'][i][j][0]['device'] = 2 
+        path['imaging_path'][i][j][1][0]['device'] = 2
+
+      inverted_z = -1 * float(path['imaging_path'][i][j][0]['args'][2][1])
+      path['imaging_path'][i][j][0]['args'][2][1] = str(inverted_z)
+
+      inverted_path['imaging_path'].append(path['imaging_path'][i][j])
+
+  #automatic file naming  
+  if name == "":
+      new_filename = filename[:len(filename)-6] + "_inverted" + ".cproj"
+      print(new_filename)
+
+      with open(new_filename, 'w') as convert_file:
+        convert_file.write(json.dumps(inverted_path))
+
+  #setting user inputed filename
+  else:
+    new_filename = filename.rsplit("/", 1)[0] + "/" + name + ".cproj"
+    with open(new_filename, 'w') as convert_file:
+      convert_file.write(json.dumps(inverted_path))
